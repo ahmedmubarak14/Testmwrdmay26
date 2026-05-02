@@ -35,6 +35,7 @@ import type {
 export interface Session {
   user_id: ID;
   created_at: string;
+  last_seen_at: string;
 }
 
 export interface PasswordRecord {

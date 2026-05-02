@@ -141,8 +141,92 @@ export async function signIn(input: { email: string; password: string }): Promis
   if (user.status !== "active") throw new Error("Account is not active");
 
   const token = `sess_${uuid()}`;
-  store.sessions.set(token, { user_id: user.id, created_at: nowISO() });
+  const now = nowISO();
+  store.sessions.set(token, { user_id: user.id, created_at: now, last_seen_at: now });
   return { user, session_token: token };
+}
+
+export async function touchSession(session_token: string): Promise<void> {
+  const sess = store.sessions.get(session_token);
+  if (!sess) return;
+  store.sessions.set(session_token, { ...sess, last_seen_at: nowISO() });
+}
+
+export async function getSessionRecord(session_token: string) {
+  return store.sessions.get(session_token) ?? null;
+}
+
+// Backoffice-only: invite an internal user. Skips the callback step (the
+// superadmin invitation IS the verification). Generates an activation token
+// pointing to /internal/activate.
+export interface InviteInternalUserInput {
+  email: string;
+  real_name: string;
+  phone: string;
+  role: "admin" | "ops" | "finance" | "cs";
+  actor_user_id: ID;
+}
+
+export async function inviteInternalUser(input: InviteInternalUserInput): Promise<User> {
+  for (const u of store.users.values()) {
+    if (u.email === input.email) throw new Error("Email already registered");
+  }
+  const userId = uuid();
+  const token = `int_act_${uuid()}`;
+  const user: User = {
+    id: userId,
+    email: input.email,
+    role: input.role,
+    real_name: input.real_name,
+    phone: input.phone,
+    platform_alias: input.real_name,
+    company_id: null,
+    status: "pending_kyc",
+    activation_status: "callback_completed",
+    callback_notes: `invited by ${input.actor_user_id}`,
+    activation_token: token,
+    language: "en",
+    onboarding_completed: false,
+    created_at: nowISO(),
+    updated_at: nowISO(),
+  };
+  store.users.set(userId, user);
+  // Phase 3 will send a real email; Phase 1 logs the link.
+  // eslint-disable-next-line no-console
+  console.log(
+    `[backoffice] internal user invited — activation link: /internal/activate?token=${token}`,
+  );
+  return user;
+}
+
+export async function activateInternalUser(input: {
+  activation_token: string;
+  password: string;
+}): Promise<User> {
+  const parsed = ActivateAccountSchema.parse(input);
+  const user = Array.from(store.users.values()).find(
+    (u) => u.activation_token === parsed.activation_token,
+  );
+  if (!user) throw new Error("Invalid activation token");
+  if (
+    user.role !== "admin" &&
+    user.role !== "ops" &&
+    user.role !== "finance" &&
+    user.role !== "cs"
+  ) {
+    throw new Error("Token is not for an internal user");
+  }
+  const updated: User = {
+    ...user,
+    status: "active",
+    activation_status: "activated",
+    activation_token: null,
+    onboarding_completed: true,
+    updated_at: nowISO(),
+  };
+  store.users.set(user.id, updated);
+  store.passwords.set(user.id, { user_id: user.id, password: parsed.password });
+  return updated;
 }
 
 export async function signOut(session_token: string): Promise<void> {
