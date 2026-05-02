@@ -2,48 +2,32 @@
 
 Anonymous B2B procurement platform for Saudi Arabia. Quote-only model with admin-curated master catalog and supplier offers.
 
-> **Status:** pre-build. The repo currently contains the strategic brief and build prompts only. The monorepo scaffold lands when [Prompt 1](docs/build/01-monorepo-scaffold.md) is run.
+> **Status:** Prompt 1 (monorepo scaffold) complete. Apps and packages exist and boot to a hello-world page. Prompt 2 (shared package) is next.
 
-## What's in this repo (today)
+## Repository layout
 
 ```
 .
 ├── CLAUDE.md                     # The constitution. Always loaded by Claude Code.
-├── docs/
-│   ├── strategic-brief.md        # Full v3 brief: positioning, model, data, screens
-│   └── build/                    # Numbered build prompts, run sequentially
-│       ├── 01-monorepo-scaffold.md
-│       ├── 02-shared-package.md
-│       ├── 03-public-auth.md
-│       ├── 04-client-portal.md
-│       ├── 05-supplier-portal.md
-│       ├── 06-backoffice.md
-│       ├── 07-mobile.md
-│       ├── 08-supabase-wiring.md
-│       └── 09-zatca-moyasar-notifications.md
-└── README.md
-```
-
-## What this becomes (after Prompt 1)
-
-A Turborepo monorepo:
-
-```
-mwrd-platform/
 ├── apps/
-│   ├── client/        → client.mwrd.io        (Next.js 15)
-│   ├── supplier/      → supplier.mwrd.io      (Next.js 15)
-│   ├── backoffice/    → backoffice.mwrd.io    (Next.js 15)
-│   └── mobile/        → iOS + Android         (Expo)
+│   ├── client/        → client.mwrd.io        (Next.js 16, port 3000)
+│   ├── supplier/      → supplier.mwrd.io      (Next.js 16, port 3001)
+│   ├── backoffice/    → backoffice.mwrd.io    (Next.js 16, port 3002)
+│   └── mobile/        → iOS + Android         (Expo SDK 54)
 ├── packages/
-│   ├── shared/        → types, schemas, utils, mock data layer
-│   ├── auth-public/   → shared client+supplier auth (NOT used by backoffice)
-│   ├── ui-web/        → shared shadcn components
-│   ├── ui-mobile/     → shared NativeWind components
-│   └── config/        → eslint, tsconfig, tailwind base
+│   ├── shared/        → @mwrd/shared      types, schemas, utils, mock data layer
+│   ├── auth-public/   → @mwrd/auth-public shared client+supplier+mobile auth (NOT used by backoffice)
+│   ├── ui-web/        → @mwrd/ui-web      shared shadcn primitives
+│   ├── ui-mobile/     → @mwrd/ui-mobile   shared NativeWind primitives
+│   └── config/        → @mwrd/config      shared lint/tsconfig/tailwind base
+├── docs/
+│   ├── strategic-brief.md
+│   └── build/                    # Numbered build prompts, run sequentially
 ├── turbo.json
 └── package.json
 ```
+
+> Note: shadcn/ui was scaffolded with `--rtl` for client + supplier, and without `--rtl` for backoffice (English-only). Both cases use Tailwind v4 + base-ui.
 
 ## Build order
 
@@ -79,7 +63,7 @@ ZATCA Phase 2 credential approval and Moyasar merchant account onboarding can ea
 
 Full rationale in [`docs/strategic-brief.md`](docs/strategic-brief.md). Enforcement rules live in [`CLAUDE.md`](CLAUDE.md).
 
-## Seed credentials (Phase 1, mock data)
+## Seed credentials (introduced in Prompt 2)
 
 | Role | Email | Password |
 |---|---|---|
@@ -87,18 +71,22 @@ Full rationale in [`docs/strategic-brief.md`](docs/strategic-brief.md). Enforcem
 | Supplier | supplier@mwrd.com | supplier123 |
 | Admin | admin@mwrd.com | admin123 |
 
-## Local development (after Prompt 1)
+## Local development
 
 ```bash
 npm install
-npm run dev
+npm run dev          # starts all apps via turbo
+npm run type-check   # tsc --noEmit across the workspace
 ```
 
-Ports:
-- `client` → http://localhost:3000
-- `supplier` → http://localhost:3001
-- `backoffice` → http://localhost:3002
-- `mobile` → Expo dev server
+Run a single app:
+
+```bash
+npm run dev --workspace=client       # http://localhost:3000
+npm run dev --workspace=supplier     # http://localhost:3001
+npm run dev --workspace=backoffice   # http://localhost:3002
+npm run dev --workspace=mobile       # Expo dev server
+```
 
 ## License
 

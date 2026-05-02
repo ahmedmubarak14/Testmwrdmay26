@@ -1,0 +1,24 @@
+{
+  "name": "@mwrd/auth-public",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "lint": "echo \"(no lint configured for @mwrd/auth-public)\"",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@mwrd/shared": "*",
+    "zod": "^3.23.8",
+    "react-hook-form": "^7.51.5",
+    "@hookform/resolvers": "^3.6.0"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "@types/react": "^18.3.3"
+  }
+}
