@@ -93,6 +93,52 @@ export async function listRFQsForClient(client_company_id: ID): Promise<RFQ[]> {
   );
 }
 
+export interface SubmitCartAsRFQInput {
+  user_id: ID;
+  title: string;
+  description: string;
+  delivery_city: string;
+  delivery_date: string;
+  category_id?: ID | null;
+}
+
+export async function submitCartAsRFQ(input: SubmitCartAsRFQInput): Promise<RFQ> {
+  const user = store.users.get(input.user_id);
+  if (!user || !user.company_id) throw new Error("User has no company");
+  const cart = Array.from(store.carts.values()).find(
+    (c) => c.user_id === input.user_id && c.status === "active",
+  );
+  if (!cart || cart.items.length === 0) throw new Error("Cart is empty");
+
+  const rfqItems = cart.items.map((ci) => {
+    const mp = store.master_products.get(ci.master_product_id);
+    return {
+      master_product_id: ci.master_product_id,
+      free_text_name: null,
+      description: mp?.description_en ?? "",
+      qty: ci.qty,
+      unit: mp?.default_unit ?? "piece",
+      pack_type: ci.pack_type,
+    };
+  });
+
+  const rfq = await createRFQ({
+    client_company_id: user.company_id,
+    created_by_user_id: input.user_id,
+    title: input.title,
+    description: input.description,
+    category_id: input.category_id ?? null,
+    delivery_city: input.delivery_city,
+    delivery_date: input.delivery_date,
+    source: "catalog",
+    items: rfqItems,
+  });
+
+  // Clear the active cart.
+  store.carts.delete(cart.id);
+  return rfq;
+}
+
 export async function listOpenRFQsForSupplier(supplier_company_id: ID): Promise<RFQ[]> {
   // Supplier sees only RFQs they were matched to (via a quote).
   // CLAUDE.md "Supplier blind rules": no count of how many other suppliers received it.
