@@ -11,12 +11,14 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "type-check": "turbo run type-check",
+    "test:shared": "npm run test --workspace=@mwrd/shared",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
+    "prettier": "^3.3.2",
+    "tsx": "^4.21.0",
     "turbo": "^2.0.6",
-    "typescript": "^5.4.5",
-    "prettier": "^3.3.2"
+    "typescript": "^5.4.5"
   },
   "packageManager": "npm@10.9.7",
   "engines": {

@@ -6,7 +6,8 @@
   "types": "./src/index.ts",
   "scripts": {
     "lint": "echo \"(no lint configured for @mwrd/shared)\"",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test": "tsx test.ts"
   },
   "dependencies": {
     "zod": "^3.23.8",
