@@ -1,6 +1,24 @@
-// @mwrd/auth-public — auth code shared by client + supplier + mobile ONLY.
-// NEVER imported by apps/backoffice. Backoffice has its own separate auth.
-// Phase 2: Supabase Auth tokens issued here use the public `aud` claim;
-// backoffice middleware rejects them.
+// @mwrd/auth-public — auth surface shared by client + supplier + mobile.
+// NEVER imported by apps/backoffice.
 
-export {};
+export { AuthLayout } from "./components/AuthLayout";
+export { LoginForm } from "./components/LoginForm";
+export { RegisterForm } from "./components/RegisterForm";
+export { ThankYouCard } from "./components/ThankYouCard";
+export { ActivateForm } from "./components/ActivateForm";
+export { OnboardingWizard } from "./components/OnboardingWizard";
+
+export {
+  SESSION_COOKIE_NAME,
+  setSessionCookie,
+  getSessionCookie,
+  clearSessionCookie,
+} from "./utils/session";
+
+export {
+  getRedirectUrl,
+  type AppRole,
+  type RedirectDecision,
+} from "./utils/role-redirect";
+
+export { logoutAction } from "./actions/onboarding";

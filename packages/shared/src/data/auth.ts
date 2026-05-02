@@ -173,3 +173,46 @@ export async function completeOnboarding(user_id: ID): Promise<User> {
   }
   return updated;
 }
+
+export async function getUserByActivationToken(token: string): Promise<User | null> {
+  for (const u of store.users.values()) {
+    if (u.activation_token === token) return u;
+  }
+  return null;
+}
+
+export interface UpdateCompanyOnboardingInput {
+  user_id: ID;
+  cr_number?: string;
+  vat_number?: string;
+  full_address?: string;
+  categories_served?: ID[];
+}
+
+// Used by the onboarding wizard to capture per-step input.
+export async function updateCompanyOnboarding(
+  input: UpdateCompanyOnboardingInput,
+): Promise<User> {
+  const user = store.users.get(input.user_id);
+  if (!user || !user.company_id) throw new Error("User has no company");
+  const company = store.companies.get(user.company_id);
+  if (!company) throw new Error("Company not found");
+
+  const updates: Partial<typeof company> = {};
+  if (input.cr_number !== undefined) updates.cr_number = input.cr_number;
+  if (input.vat_number !== undefined) updates.vat_number = input.vat_number;
+  if (input.categories_served !== undefined) updates.categories_served = input.categories_served;
+  if (input.full_address !== undefined) {
+    // Stored on the company's first delivery address as a side-effect.
+    // Phase 2: model this as a structured Address row.
+    updates.signup_intent =
+      (company.signup_intent ?? "") + ` | address=${input.full_address}`;
+  }
+
+  store.companies.set(company.id, {
+    ...company,
+    ...updates,
+    updated_at: nowISO(),
+  });
+  return user;
+}
