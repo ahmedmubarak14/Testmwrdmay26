@@ -69,6 +69,11 @@ export interface Company {
   onboarding_completed: boolean;
   // Supplier-only operational defaults
   auto_quote_review_window?: AutoQuoteReviewWindow;
+  // Supplier-only kill switch — when false, the auto-quote engine treats all
+  // of this supplier's offers as if auto_quote_enabled were false.
+  auto_quote_globally_enabled?: boolean;
+  // Supplier-only: extra days added to every offer's effective lead time.
+  default_lead_time_pad_days?: number;
   created_at: ISODateString;
   updated_at: ISODateString;
 }

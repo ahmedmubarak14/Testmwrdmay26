@@ -49,6 +49,10 @@ export async function listAllUsers(): Promise<User[]> {
   return Array.from(store.users.values());
 }
 
+export async function getCompany(company_id: ID): Promise<Company | null> {
+  return store.companies.get(company_id) ?? null;
+}
+
 // ─── Margins ────────────────────────────────────────────────────────────────
 
 export async function setMargin(input: {

@@ -18,6 +18,45 @@ export async function listOffersForSupplier(supplier_company_id: ID): Promise<Of
   );
 }
 
+export async function findOfferByProduct(
+  supplier_company_id: ID,
+  master_product_id: ID,
+): Promise<Offer | null> {
+  for (const o of store.offers.values()) {
+    if (
+      o.supplier_company_id === supplier_company_id &&
+      o.master_product_id === master_product_id
+    ) {
+      return o;
+    }
+  }
+  return null;
+}
+
+export interface RateCardSettings {
+  auto_quote_review_window?: import("../types").AutoQuoteReviewWindow;
+  auto_quote_globally_enabled?: boolean;
+  default_lead_time_pad_days?: number;
+}
+
+export async function updateRateCardSettings(
+  supplier_company_id: ID,
+  settings: RateCardSettings,
+): Promise<void> {
+  const company = store.companies.get(supplier_company_id);
+  if (!company) throw new Error("Company not found");
+  store.companies.set(supplier_company_id, {
+    ...company,
+    auto_quote_review_window:
+      settings.auto_quote_review_window ?? company.auto_quote_review_window,
+    auto_quote_globally_enabled:
+      settings.auto_quote_globally_enabled ?? company.auto_quote_globally_enabled,
+    default_lead_time_pad_days:
+      settings.default_lead_time_pad_days ?? company.default_lead_time_pad_days,
+    updated_at: new Date().toISOString(),
+  });
+}
+
 export async function getOffer(id: ID): Promise<Offer | null> {
   return store.offers.get(id) ?? null;
 }
