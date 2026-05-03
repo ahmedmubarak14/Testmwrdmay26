@@ -156,6 +156,13 @@ export async function getSessionRecord(session_token: string) {
   return store.sessions.get(session_token) ?? null;
 }
 
+// Mobile token rehydration — resolves a session token to a user (public sessions only).
+export async function getUserByToken(session_token: string): Promise<User | null> {
+  const sess = store.sessions.get(session_token);
+  if (!sess) return null;
+  return store.users.get(sess.user_id) ?? null;
+}
+
 // Backoffice-only: invite an internal user. Skips the callback step (the
 // superadmin invitation IS the verification). Generates an activation token
 // pointing to /internal/activate.

@@ -1,0 +1,122 @@
+const en = {
+  // Auth
+  sign_in: "Sign In",
+  sign_out: "Sign Out",
+  register: "Register",
+  email: "Email",
+  password: "Password",
+  full_name: "Full name",
+  company_name: "Company name",
+  phone: "Phone",
+  role: "I am a",
+  role_client: "Client (Buyer)",
+  role_supplier: "Supplier",
+  activation_token: "Activation token",
+  activate_account: "Activate Account",
+  no_account: "No account? Register",
+  have_account: "Have an account? Sign in",
+  activate_link: "Have an activation token? Activate",
+  signing_in: "Signing in…",
+  registering: "Registering…",
+  activating: "Activating…",
+  registration_pending: "Registration pending",
+  registration_pending_desc:
+    "Your account is under review. Once verified you'll receive an activation link.",
+
+  // Nav
+  catalog: "Catalog",
+  basket: "Basket",
+  rfqs: "My RFQs",
+  orders: "Orders",
+  account: "Account",
+
+  // Catalog
+  all_categories: "All categories",
+  search_products: "Search products…",
+  add_to_basket: "Add to basket",
+  added: "Added!",
+  pack_type: "Pack type",
+  qty: "Qty",
+  specs: "Specifications",
+  no_products: "No products found.",
+  category: "Category",
+
+  // Basket
+  your_basket: "Your basket",
+  basket_empty: "Your basket is empty.",
+  browse_catalog: "Browse catalog",
+  submit_rfq: "Submit as RFQ",
+  submitting: "Submitting…",
+  delivery_city: "Delivery city",
+  delivery_date: "Delivery date",
+  rfq_title: "RFQ title",
+  rfq_submitted: "RFQ submitted!",
+  rfq_submitted_desc: "We'll match you with suppliers and notify you when quotes arrive.",
+  items_count: (n: number) => `${n} item${n !== 1 ? "s" : ""}`,
+  remove: "Remove",
+
+  // RFQs
+  my_rfqs: "My RFQs",
+  no_rfqs: "No RFQs yet.",
+  rfq_detail: "RFQ Detail",
+  quotes: "Quotes",
+  no_quotes: "No quotes received yet.",
+  accept_quote: "Accept",
+  accepting: "Accepting…",
+  quote_accepted: "Quote accepted",
+  compare_quotes: "Compare Quotes",
+  unit_price: "Unit price",
+  total: "Total",
+  vat: "VAT (15%)",
+  grand_total: "Grand total",
+  supplier: "Supplier",
+  status: "Status",
+  expires: "Expires",
+  delivery: "Delivery",
+  submitted: "Submitted",
+
+  // Orders
+  my_orders: "My Orders",
+  no_orders: "No orders yet.",
+  order_detail: "Order Detail",
+  po_number: "PO Number",
+  order_status: "Order Status",
+  items: "Items",
+  timeline: "Timeline",
+
+  // Account
+  my_account: "My Account",
+  language: "Language",
+  english: "English",
+  arabic: "عربي",
+  role_label: "Role",
+  company: "Company",
+  version: "Version",
+
+  // Statuses
+  open: "Open",
+  draft_auto: "Auto-draft",
+  draft_manual: "Manual draft",
+  submitted_to_client: "Submitted",
+  pending_admin_review: "Under review",
+  accepted: "Accepted",
+  rejected: "Not accepted",
+  awaiting_approval: "Awaiting approval",
+  confirmed: "Confirmed",
+  in_progress: "In progress",
+  delivered: "Delivered",
+  cancelled: "Cancelled",
+  active: "Active",
+  suspended: "Suspended",
+  pending_kyc: "Pending KYC",
+
+  // Errors
+  required: "This field is required",
+  invalid_email: "Enter a valid email",
+  invalid_phone: "Enter a valid phone (+9665xxxxxxxx)",
+  save_failed: "Save failed",
+  load_failed: "Failed to load data",
+} as const;
+
+export type TranslationKey = keyof typeof en;
+export default en;
